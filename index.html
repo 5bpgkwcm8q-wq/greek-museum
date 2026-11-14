@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Древнегреческий музей</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  
+  <header class="hero">
+    <nav class="hero-nav">
+      <div class="logo">ДРЕВНЕГРЕЧЕСКИЙ<br>МУЗЕЙ</div>
+      <div class="nav-right">
+        <div class="links">
+          <a href="catalog.html">Каталог</a>
+          <a href="timeline.html">Хронология</a>
+          <a href="myths.html">Мифы</a>
+        </div>
+        <button class="theme-toggle" id="themeBtn">☀️</button>
+      </div>
+    </nav>
+
+    <div class="hero-title-wrapper">
+      <h1 class="hero-title">
+        <span>ДРЕВНЕ</span>
+        <span>ГРЕЧЕСКИЙ</span>
+        <span>МУЗЕЙ</span>
+      </h1>
+      <div class="hero-arrow">↓</div>
+    </div>
+    
+    <div class="cloud-fade"></div>
+  </header>
+
+  <div class="marquee-container">
+    <div class="marquee">
+      ΑΘΗΝΑ • ΖΕΥΣ • ΕΛΛΑΔΑ • ΜΟΥΣΕΙΟ • ΤΕΧΝΗ • ΙΣΤΟΡΙΑ • ΠΟΛΙΤΙΣΜΟΣ • ΑΘΗΝΑ • ΖΕΥΣ • ΕΛΛΑΔΑ • ΜΟΥΣΕΙΟ • ΤΕΧΝΗ • ΙΣΤΟΡΙΑ • ΠΟΛΙΤΙΣΜΟΣ • 
+    </div>
+  </div>
+
+  <section class="philosophy">
+    <h2>Древние артефакты,<br>которые меняют<br>взгляд на мир.</h2>
+    <p>Погрузитесь в историю Эллады. Более 30 000 подлинных экспонатов из коллекции Метрополитен-музея ждут вас.</p>
+    <a class="btn" href="catalog.html">Открыть каталог</a>
+  </section>
+
+  <script>
+    const themeBtn = document.getElementById('themeBtn');
+    const body = document.body;
+    if (localStorage.getItem('theme') === 'light') {
+      body.classList.add('light-theme');
+      themeBtn.textContent = '🌙';
+    }
+    themeBtn.addEventListener('click', () => {
+      body.classList.toggle('light-theme');
+      if (body.classList.contains('light-theme')) {
+        themeBtn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        themeBtn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+  </script>
+</body>
+</html>

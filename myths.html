@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Мифы — Древнегреческий музей</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  
+  <div class="page-container">
+    <header class="page-header">
+      <div class="logo">ДРЕВНЕГРЕЧЕСКИЙ<br>МУЗЕЙ</div>
+      <nav class="page-nav">
+        <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
+        <a href="timeline.html">Хронология</a>
+        <a href="myths.html" style="color: var(--text-light);">Мифы</a>
+        <button class="theme-toggle" id="themeBtn" style="margin-left: 10px;">☀️</button>
+      </nav>
+    </header>
+
+    <h1 class="page-title">Герои и боги</h1>
+    <p style="color: var(--text-muted); margin-bottom: 40px; font-size: 1.1rem;">Бесконечная энциклопедия мифов</p>
+    
+    <div class="filters">
+      <input type="text" id="searchMyth" placeholder="Найти бога или героя...">
+    </div>
+
+    <div id="list" class="grid">Загрузка...</div>
+    
+    <div class="btn-container">
+      <button id="loadMoreBtn" class="btn" hidden>Показать ещё богов</button>
+    </div>
+  </div>
+
+  <script type="module">
+    const ALL_MYTHS = [
+      'Зевс', 'Афина', 'Аполлон', 'Артемида', 'Посейдон', 'Аид', 
+      'Гера', 'Арес', 'Афродита', 'Гефест', 'Гермес', 'Деметра', 'Дионис', 'Гестия',
+      'Кронос', 'Рея', 'Уран', 'Гея', 'Прометей', 'Атлас', 'Хаос',
+      'Геракл', 'Персей', 'Тесей', 'Ахилл', 'Одиссей', 'Ясон', 'Орфей', 'Эдип', 'Елена Прекрасная',
+      'Медуза Горгона', 'Минотавр', 'Цербер', 'Гидра', 'Сфинкс', 'Циклоп', 'Тифон'
+    ];
+    const box = document.getElementById('list');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const searchInput = document.getElementById('searchMyth');
+    const loadedCards = {}; 
+    let loadedCount = 0;
+    const PAGE_SIZE = 8;
+    let isSearching = false;
+
+    async function summary(title) {
+      const url = `https://ru.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    }
+
+    function renderCard(p) {
+      return `
+        <a class="card" href="${p.content_urls?.desktop?.page || '#'}" target="_blank" rel="noopener">
+          ${p.thumbnail ? `<img src="${p.thumbnail.source}" alt="${p.title}" loading="lazy">` : '<div style="height:350px; display:flex; align-items:center; justify-content:center; color:var(--text-muted);">Нет фото</div>'}
+          <div class="card-info">
+            <h3>${p.title}</h3>
+            <p>${p.extract || ''}</p>
+          </div>
+        </a>
+      `;
+    }
+
+    async function loadMyths() {
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.textContent = "Загрузка...";
+      const nextBatch = ALL_MYTHS.slice(loadedCount, loadedCount + PAGE_SIZE);
+      const cards = await Promise.all(
+        nextBatch.map(async t => {
+          if (loadedCards[t]) return loadedCards[t];
+          const data = await summary(t).catch(() => null);
+          if (data) loadedCards[t] = data;
+          return data;
+        })
+      );
+      if (!isSearching) {
+        if (loadedCount === 0) box.innerHTML = '';
+        box.insertAdjacentHTML('beforeend', cards.filter(Boolean).map(renderCard).join(''));
+      }
+      loadedCount += PAGE_SIZE;
+      loadMoreBtn.disabled = false;
+      loadMoreBtn.textContent = "Показать ещё богов";
+      loadMoreBtn.hidden = loadedCount >= ALL_MYTHS.length || isSearching;
+    }
+
+    async function performSearch(query) {
+      const q = query.toLowerCase().trim();
+      if (q === '') {
+        isSearching = false;
+        box.innerHTML = '';
+        const loadedKeys = Object.keys(loadedCards).slice(0, loadedCount);
+        box.innerHTML = loadedKeys.map(k => renderCard(loadedCards[k])).join('');
+        loadMoreBtn.hidden = loadedCount >= ALL_MYTHS.length;
+        return;
+      }
+      isSearching = true;
+      loadMoreBtn.hidden = true;
+      box.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted);">Поиск по свиткам...</p>';
+      const matches = ALL_MYTHS.filter(name => name.toLowerCase().includes(q));
+      if (matches.length === 0) {
+        box.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted);">Ничего не найдено.</p>';
+        return;
+      }
+      const results = await Promise.all(
+        matches.map(async t => {
+          if (loadedCards[t]) return loadedCards[t];
+          const data = await summary(t).catch(() => null);
+          if (data) loadedCards[t] = data;
+          return data;
+        })
+      );
+      box.innerHTML = results.filter(Boolean).map(renderCard).join('');
+    }
+
+    let timeout = null;
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => performSearch(e.target.value), 400);
+    });
+    loadMyths();
+    loadMoreBtn.addEventListener('click', loadMyths);
+  </script>
+
+  <script>
+    const themeBtn = document.getElementById('themeBtn');
+    const body = document.body;
+    if (localStorage.getItem('theme') === 'light') {
+      body.classList.add('light-theme');
+      themeBtn.textContent = '🌙';
+    }
+    themeBtn.addEventListener('click', () => {
+      body.classList.toggle('light-theme');
+      if (body.classList.contains('light-theme')) {
+        themeBtn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        themeBtn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Хронология — Древнегреческий музей</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Дополнительные стили для таймлайна */
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 20px 0;
+    }
+    /* Вертикальная линия */
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      background: var(--border);
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -1px;
+    }
+    /* Контейнер вокруг каждого блока */
+    .container-tl {
+      padding: 10px 40px;
+      position: relative;
+      background-color: inherit;
+      width: 50%;
+    }
+    /* Кружочки на линии */
+    .container-tl::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      right: -10px;
+      background-color: var(--bg-dark);
+      border: 4px solid var(--text-light);
+      top: 15px;
+      border-radius: 50%;
+      z-index: 1;
+    }
+    /* Левая сторона */
+    .left { left: 0; }
+    /* Правая сторона */
+    .right { left: 50%; }
+    /* Кружочек для правой стороны */
+    .right::after {
+      left: -10px;
+    }
+    /* Содержимое блока */
+    .content-tl {
+      padding: 20px 30px;
+      background: var(--bg-card);
+      position: relative;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .content-tl:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .content-tl h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .content-tl p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+    }
+    .content-tl a {
+      color: var(--text-light);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      border-bottom: 1px solid var(--text-light);
+      transition: opacity 0.3s;
+    }
+    .content-tl a:hover {
+      opacity: 0.7;
+    }
+
+    /* Мобильная версия (линия слева) */
+    @media screen and (max-width: 768px) {
+      .timeline::after { left: 31px; }
+      .container-tl { width: 100%; padding-left: 70px; padding-right: 25px; }
+      .container-tl::after { left: 21px; }
+      .left { left: 0; }
+      .right { left: 0; }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="page-container">
+    <!-- Шапка -->
+    <header class="page-header">
+      <div class="logo">ДРЕВНЕГРЕЧЕСКИЙ<br>МУЗЕЙ</div>
+      <nav class="page-nav">
+        <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
+        <a href="timeline.html" style="color: var(--text-light);">Хронология</a>
+        <a href="myths.html">Мифы</a>
+        <button class="theme-toggle" id="themeBtn" style="margin-left: 10px;">☀️</button>
+      </nav>
+    </header>
+
+    <h1 class="page-title">Хронология</h1>
+    <p style="color: var(--text-muted); font-size: 1.1rem;">История Древней Греции в веках</p>
+
+    <!-- Таймлайн -->
+    <div class="timeline">
+      
+      <!-- Архаика -->
+      <div class="container-tl left">
+        <div class="content-tl">
+          <h3>Архаика</h3>
+          <p>VIII–VI века до н.э. Эпоха формирования греческих полисов, появления алфавита и ранней скульптуры (куросы и коры).</p>
+          <a href="catalog.html?era=Archaic">Смотреть экспонаты →</a>
+        </div>
+      </div>
+
+      <!-- Классика -->
+      <div class="container-tl right">
+        <div class="content-tl">
+          <h3>Классика</h3>
+          <p>V–IV века до н.э. Золотой век Афин. Строительство Парфенона, расцвет театра, философии и гармоничной скульптуры.</p>
+          <a href="catalog.html?era=Classical">Смотреть экспонаты →</a>
+        </div>
+      </div>
+
+      <!-- Эллинизм -->
+      <div class="container-tl left">
+        <div class="content-tl">
+          <h3>Эллинизм</h3>
+          <p>323 г. до н.э. – 30 г. до н.э. Завоевания Александра Македонского, смешение культур и появление экспрессивных статуй.</p>
+          <a href="catalog.html?era=Hellenistic">Смотреть экспонаты →</a>
+        </div>
+      </div>
+
+      <!-- Римский период -->
+      <div class="container-tl right">
+        <div class="content-tl">
+          <h3>Римский период</h3>
+          <p>С 30 г. до н.э. Греция становится частью Римской империи, но её искусство продолжает копироваться и развиваться.</p>
+          <a href="catalog.html?era=Roman">Смотреть экспонаты →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Скрипт смены темы -->
+  <script>
+    const themeBtn = document.getElementById('themeBtn');
+    const body = document.body;
+    if (localStorage.getItem('theme') === 'light') {
+      body.classList.add('light-theme');
+      themeBtn.textContent = '🌙';
+    }
+    themeBtn.addEventListener('click', () => {
+      body.classList.toggle('light-theme');
+      if (body.classList.contains('light-theme')) {
+        themeBtn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        themeBtn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+  </script>
+</body>
+</html>

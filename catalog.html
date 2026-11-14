@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Каталог — Древнегреческий музей</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  
+  <div class="page-container">
+    <!-- Шапка -->
+    <header class="page-header">
+      <div class="logo">ДРЕВНЕГРЕЧЕСКИЙ<br>МУЗЕЙ</div>
+      <nav class="page-nav">
+        <a href="index.html">Главная</a>
+        <a href="catalog.html" style="color: var(--text-light);">Каталог</a>
+        <a href="timeline.html">Хронология</a>
+        <a href="myths.html">Мифы</a>
+        <button class="theme-toggle" id="themeBtn" style="margin-left: 10px;">☀️</button>
+      </nav>
+    </header>
+
+    <h1 class="page-title">Коллекция</h1>
+    
+    <div class="filters">
+      <input type="text" id="search" placeholder="Поиск по названию...">
+      <select id="era">
+        <option value="">Все эпохи</option>
+        <option value="Archaic">Архаика</option>
+        <option value="Classical">Классика</option>
+        <option value="Hellenistic">Эллинизм</option>
+        <option value="Roman">Римский период</option>
+      </select>
+    </div>
+
+    <div id="grid" class="grid">Загрузка...</div>
+    
+    <div class="btn-container">
+      <button id="more" class="btn" hidden>Показать ещё</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/catalog.js"></script>
+
+  <script>
+    const themeBtn = document.getElementById('themeBtn');
+    const body = document.body;
+    if (localStorage.getItem('theme') === 'light') {
+      body.classList.add('light-theme');
+      themeBtn.textContent = '🌙';
+    }
+    themeBtn.addEventListener('click', () => {
+      body.classList.toggle('light-theme');
+      if (body.classList.contains('light-theme')) {
+        themeBtn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        themeBtn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+  </script>
+</body>
+</html>
